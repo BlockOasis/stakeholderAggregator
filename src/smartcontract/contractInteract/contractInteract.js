@@ -1,9 +1,11 @@
 const { ethers, InfuraProvider } = require('ethers');
 const { abi } = require("../builds/compiledContract.json")
-const contractAddress = "0xe50861925D9B886cD1D8dc37415c835f472f9d11"; // Replace with the deployed contract address
-const privateKey = "1da8cd43728e610cd6f35f1eeb962288de12485c82218c7e517e4212e9cb4368"; // Replace with the private key of your Ethereum wallet
-const infuraProjectId = "b6f5b40911084f30baad1da3cfcd2d7b"; // Replace with your Infura project ID
-const infuraAPISecret = "9bc3c76ddb4347b0997bd38c14dce7a5";
+const config = require("../../../config");
+
+const contractAddress = config.contractAddress; // Replace with the deployed contract address
+const privateKey = config.privateKey; // Replace with the private key of your Ethereum wallet
+const infuraProjectId = config.infuraProjectId; // Replace with your Infura project ID
+const infuraAPISecret = config.infuraAPISecret;
 
 async function storeDataToContract(timestamp, ipfsCID) {
   try {

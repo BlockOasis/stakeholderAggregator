@@ -16,7 +16,7 @@ async function uploadChunkToIPFS(chunkFileDirectory, timestamp) {
   try {
     const uploadResponse = await lighthouse.upload(
       chunkFileDirectory,
-      config.apiKey
+      config.lighthouseAPIKey
     );
     // Log the IPFS hash of the uploaded file
     logger.info(

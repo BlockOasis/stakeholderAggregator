@@ -1,6 +1,5 @@
 // src/mqtt/mqttclient.js
 const mqtt = require('mqtt');
-const mqttConfig = require('./mqttConfig');
 
 let client;
 
