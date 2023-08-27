@@ -7,12 +7,12 @@ const privateKey = config.privateKey; // Replace with the private key of your Et
 const infuraProjectId = config.infuraProjectId; // Replace with your Infura project ID
 const infuraAPISecret = config.infuraAPISecret;
 
-async function storeDataToContract(timestamp, ipfsCID) {
+async function storeDataToContract(ipfsCID) {
   try {
     const provider = new InfuraProvider("goerli", infuraProjectId, infuraAPISecret);
     const signer = new ethers.Wallet(privateKey, provider);
     const contract = new ethers.Contract(contractAddress, abi, signer);
-    const tx = await contract.storeData(timestamp, ipfsCID);
+    const tx = await contract.storeData(ipfsCID);
     await tx.wait();
     console.log('Data stored on the contract successfully!');
   } catch (error) {
