@@ -2,6 +2,13 @@
 
 This project implements an MQTT data handling system that saves received data into chunks. It connects to an MQTT broker, processes incoming messages, and uploads the data to IPFS. The IPFS Content Identifiers (CIDs) are then stored on an Ethereum smart contract.
 
+## Data Flow Diagrams
+To better understand the data flow within the Stakeholder Aggregator, refer to the following diagrams:
+
+- **Level 0 DFD:** ![Stakeholder Aggregator Level 0 DFD](https://github.com/BlockOasis/dataFlowDiagrams/blob/main/stakeholder-aggregator-level-0.svg)
+  
+- **Level 1 DFD:** ![Stakeholder Aggregator Level 1 DFD](https://github.com/BlockOasis/dataFlowDiagrams/blob/main/stakeholder-aggregator-level-1.svg)
+
 ## Directory Structure
 
 The project directory is organized as follows:
