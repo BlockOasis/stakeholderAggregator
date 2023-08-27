@@ -24,7 +24,7 @@ async function uploadChunkToIPFS(chunkFileDirectory, timestamp) {
     );
 
     // Store the IPFS CID on the smart contract
-    await storeDataToContract(timestamp, uploadResponse.data.Hash);
+    await storeDataToContract(uploadResponse.data.Hash, timestamp);
     //logger.info(`Transaction made on contract: ${ethRes}`)
   } catch (err) {
     logger.error(`Error uploading chunk to IPFS: ${err.message}`);
