@@ -10,7 +10,7 @@ const infuraAPISecret = config.infuraAPISecret;
 
 
 
-async function storeDataToContract(timestamp, ipfsCID) {
+async function storeDataToContract(ipfsCID, timestamp) {
   try {
     const provider = new InfuraProvider("goerli", infuraProjectId, infuraAPISecret);
     const signer = new ethers.Wallet(privateKey, provider);
@@ -44,8 +44,64 @@ async function getTimestampByCIDFromContract(ipfsCID) {
     console.error('Error getting timestamp by CID from the contract:', error);
   }
 }
+async function pauseContract() {
+  try {
+    const provider = new InfuraProvider("goerli", infuraProjectId, infuraAPISecret);
+    const signer = new ethers.Wallet(privateKey, provider);
+    const contract = new ethers.Contract(contractAddress, abi, signer);
+    const tx = await contract.pause();
+    await tx.wait();
+    console.log('Contract paused successfully!');
+  } catch (error) {
+    console.error('Error pausing the contract:', error);
+  }
+}
+
+async function unpauseContract() {
+  try {
+    const provider = new InfuraProvider("goerli", infuraProjectId, infuraAPISecret);
+    const signer = new ethers.Wallet(privateKey, provider);
+    const contract = new ethers.Contract(contractAddress, abi, signer);
+    const tx = await contract.unpause();
+    await tx.wait();
+    console.log('Contract unpaused successfully!');
+  } catch (error) {
+    console.error('Error unpausing the contract:', error);
+  }
+}
+
+async function allowAddressOnContract(_address) {
+  try {
+    const provider = new InfuraProvider("goerli", infuraProjectId, infuraAPISecret);
+    const signer = new ethers.Wallet(privateKey, provider);
+    const contract = new ethers.Contract(contractAddress, abi, signer);
+    const tx = await contract.allowAddress(_address);
+    await tx.wait();
+    console.log(`Address ${_address} allowed successfully!`);
+  } catch (error) {
+    console.error('Error allowing address on the contract:', error);
+  }
+}
+
+async function disallowAddressOnContract(_address) {
+  try {
+    const provider = new InfuraProvider("goerli", infuraProjectId, infuraAPISecret);
+    const signer = new ethers.Wallet(privateKey, provider);
+    const contract = new ethers.Contract(contractAddress, abi, signer);
+    const tx = await contract.disallowAddress(_address);
+    await tx.wait();
+    console.log(`Address ${_address} disallowed successfully!`);
+  } catch (error) {
+    console.error('Error disallowing address on the contract:', error);
+  }
+}
+
 module.exports = {
     storeDataToContract,
     getDataByTimestampFromContract,
-    getTimestampByCIDFromContract
-  };
+    getTimestampByCIDFromContract,
+    pauseContract,
+    unpauseContract,
+    allowAddressOnContract,
+    disallowAddressOnContract
+};
