@@ -1,81 +1,99 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+pragma solidity ^0.8.20;
 
-contract StakeholderAggregator {
-    address private owner;
-    bool public paused = false;
-    mapping(address => bool) public allowedAddresses;
+import "@openzeppelin/contracts/access/AccessControl.sol";
+import "@openzeppelin/contracts/utils/Pausable.sol";
 
-    struct Data {
-        address sender;
-        string ipfsCID;
-    }
+/**
+ * @title Data Accumulation Contract
+ * @dev Implements storage and retrieval of data timestamps and IPFS CIDs.
+ * This contract utilizes role-based access control for security.
+ */
+contract StakeholderAggregator is AccessControl, Pausable {
+    bytes32 public constant AGGREGATOR_ROLE = keccak256("AGGREGATOR_ROLE");
 
-    mapping(uint256 => Data) private dataMap;
-    mapping(bytes32 => uint256) private cidToTimestamp;
+    // Mapping from timestamp to IPFS CID
+    mapping(uint256 => string) private timestampToCid;
+    // Mapping from IPFS CID to timestamp
+    mapping(string => uint256) private cidToTimestamp;
 
-    event DataEvent(address indexed sender, uint256 indexed timestamp, string ipfsCID);
+    /**
+     * @dev Emitted when data is stored in the contract.
+     */
+    event DataStored(uint256 indexed timestamp, string cid);
 
-    modifier onlyOwner() {
-        require(msg.sender == owner, "Only the owner can call this");
-        _;
-    }
-
-    modifier onlyAllowedAddress() {
-        require(allowedAddresses[msg.sender], "You are not authorized to call this function");
-        _;
-    }
-
-    modifier whenNotPaused() {
-        require(!paused, "Contract is paused");
-        _;
-    }
-
+    /**
+     * @dev Sets the deployer as the default admin and grants the aggregator role to the deployer.
+     */
     constructor() {
-        owner = msg.sender;
+        _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
+        _grantRole(AGGREGATOR_ROLE, msg.sender); // Optional: Grant aggregator role to deployer
     }
 
-    function storeData(uint256 userTimestamp, string memory ipfsCID) external onlyAllowedAddress whenNotPaused {
-        require(dataMap[userTimestamp].sender == address(0), "Data already exists for this timestamp");
-
-        dataMap[userTimestamp] = Data(msg.sender, ipfsCID);
-        cidToTimestamp[keccak256(bytes(ipfsCID))] = userTimestamp;
-        
-        emit DataEvent(msg.sender, userTimestamp, ipfsCID);
+    /**
+     * @notice Adds a new aggregator role to an address.
+     * @dev Grants AGGREGATOR_ROLE to a provided address.
+     * @param aggregator The address to be granted the aggregator role.
+     */
+    function addAggregator(address aggregator) public {
+        require(hasRole(DEFAULT_ADMIN_ROLE, msg.sender), "Caller is not an admin");
+        grantRole(AGGREGATOR_ROLE, aggregator);
     }
 
-    function getDataByTimestamp(uint256 timestamp) external view returns (address sender, string memory ipfsCID) {
-        Data memory data = dataMap[timestamp];
-        require(data.sender != address(0), "No data found for this timestamp");
-        
-        return (data.sender, data.ipfsCID);
+    /**
+     * @notice Adds a new admin role to an address.
+     * @dev Grants DEFAULT_ADMIN_ROLE to a provided address.
+     * @param newAdmin The address to be granted the admin role.
+     */
+    function addAdmin(address newAdmin) public {
+        require(hasRole(DEFAULT_ADMIN_ROLE, msg.sender), "Caller is not an admin");
+        grantRole(DEFAULT_ADMIN_ROLE, newAdmin);
     }
 
-    function getTimestampByCID(string calldata ipfsCID) external view returns (uint256 timestamp) {
-        timestamp = cidToTimestamp[keccak256(bytes(ipfsCID))];
-        require(dataMap[timestamp].sender != address(0), "No data found for this IPFS CID");
-        
-        return timestamp;
+    /**
+     * @notice Stores the given data associated with a timestamp.
+     * @dev Stores the IPFS CID corresponding to a timestamp.
+     * @param timestamp The unique timestamp associated with the data.
+     * @param cid The IPFS CID of the data to be stored.
+     */
+    function storeData(uint256 timestamp, string memory cid) public onlyRole(AGGREGATOR_ROLE) whenNotPaused {
+        timestampToCid[timestamp] = cid;
+        cidToTimestamp[cid] = timestamp;
+
+        emit DataStored(timestamp, cid);
     }
 
-    function pause() external onlyOwner {
-        paused = true;
+    /**
+     * @notice Retrieves the IPFS CID associated with a given timestamp.
+     * @param timestamp The timestamp for which to retrieve the data.
+     * @return The IPFS CID associated with the given timestamp.
+     */
+    function getDataByTimestamp(uint256 timestamp) public view returns (string memory) {
+        return timestampToCid[timestamp];
     }
 
-    function unpause() external onlyOwner {
-        paused = false;
+    /**
+     * @notice Retrieves the timestamp associated with a given IPFS CID.
+     * @param cid The IPFS CID for which to retrieve the timestamp.
+     * @return The timestamp associated with the given IPFS CID.
+     */
+    function getTimestampByCid(string memory cid) public view returns (uint256) {
+        return cidToTimestamp[cid];
     }
 
-    function transferOwnership(address newOwner) external onlyOwner {
-        require(newOwner != address(0), "New owner is the zero address");
-        owner = newOwner;
+    /**
+     * @notice Pauses the contract, preventing certain actions.
+     * @dev Can only be called by an address with the DEFAULT_ADMIN_ROLE.
+     */
+    function pause() public onlyRole(DEFAULT_ADMIN_ROLE) {
+        _pause();
     }
 
-    function allowAddress(address _address) external onlyOwner {
-        allowedAddresses[_address] = true;
-    }
-
-    function disallowAddress(address _address) external onlyOwner {
-        allowedAddresses[_address] = false;
+    /**
+     * @notice Unpauses the contract, allowing actions to be performed again.
+     * @dev Can only be called by an address with the DEFAULT_ADMIN_ROLE.
+     */
+    function unpause() public onlyRole(DEFAULT_ADMIN_ROLE) {
+        _unpause();
     }
 }
