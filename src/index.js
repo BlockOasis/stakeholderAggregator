@@ -1,6 +1,6 @@
-const mqttClient = require('./mqtt/mqttClient');
-const dataHandler = require('./data/dataHandler');
-const config = require('../config');
+const mqttClient = require("./mqtt/mqttClient");
+const dataHandler = require("./data/dataHandler");
+const config = require("../config");
 
 async function main() {
   try {
@@ -11,13 +11,13 @@ async function main() {
     mqttClient.onMessage(dataHandler.handleIncomingMessage);
 
     // Gracefully close the connection on SIGINT (Ctrl+C)
-    process.on('SIGINT', async () => {
-      console.log('Closing the MQTT connection...');
+    process.on("SIGINT", async () => {
+      console.log("Closing the MQTT connection...");
       await mqttClient.disconnect();
       process.exit();
     });
   } catch (error) {
-    console.error('Error:', error);
+    console.error("Error:", error);
     process.exit(1);
   }
 }
