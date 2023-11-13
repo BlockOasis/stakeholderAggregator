@@ -9,7 +9,7 @@ const infuraAPISecret = config.infuraAPISecret;
 
 async function storeDataToContract(ipfsCID) {
   try {
-    const provider = new InfuraProvider("goerli", infuraProjectId, infuraAPISecret);
+    const provider = new InfuraProvider("sepolia", infuraProjectId, infuraAPISecret);
     const signer = new ethers.Wallet(privateKey, provider);
     const contract = new ethers.Contract(contractAddress, abi, signer);
     const tx = await contract.storeData(ipfsCID);
@@ -22,7 +22,7 @@ async function storeDataToContract(ipfsCID) {
 
 async function getDataByTimestampFromContract(timestamp) {
   try {
-    const provider = new InfuraProvider("goerli", infuraProjectId, infuraAPISecret);
+    const provider = new InfuraProvider("sepolia", infuraProjectId, infuraAPISecret);
     const signer = new ethers.Wallet(privateKey, provider);
     const contract = new ethers.Contract(contractAddress, abi, signer);
     const data = await contract.getDataByTimestamp(timestamp);
@@ -34,7 +34,7 @@ async function getDataByTimestampFromContract(timestamp) {
 
 async function getTimestampByCIDFromContract(ipfsCID) {
   try {
-    const provider = new InfuraProvider("goerli", infuraProjectId, infuraAPISecret);
+    const provider = new InfuraProvider("sepolia", infuraProjectId, infuraAPISecret);
     const signer = new ethers.Wallet(privateKey, provider);
     const contract = new ethers.Contract(contractAddress, abi, signer);
     const timestamp = await contract.getTimestampByCID(ipfsCID);

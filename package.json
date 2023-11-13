@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node src/index.js"
   },
-  "author": "Your Name",
+  "author": "Aryaman Raj",
   "license": "MIT",
   "dependencies": {
     "@lighthouse-web3/sdk": "^0.2.5",
