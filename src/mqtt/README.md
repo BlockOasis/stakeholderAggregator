@@ -41,7 +41,7 @@ This configuration file contains various settings for the MQTT data handling sys
 - `infuraProjectId`: The Infura project ID for connecting to the Ethereum network.
 - `infuraAPISecret`: The Infura API secret for authenticating API requests.
 - `contractAddress`: The contract address of the deployed smart contract on the Ethereum network.
-- `lighthouseApiKey`: The API key for accessing the Lighthouse service for uploading data to IPFS.
+- `web3StorageToken`: The API key for accessing the Web3 Storage service for uploading data to IPFS.
 - `mqtt`: MQTT broker configuration with `brokerIp`, `port`, and `topic` settings.
 - `maxFileSizeBytes`: The maximum file size (in bytes) for each data chunk before it is uploaded to IPFS.
 

@@ -9,11 +9,11 @@
   "author": "Aryaman Raj",
   "license": "MIT",
   "dependencies": {
-    "@lighthouse-web3/sdk": "^0.2.5",
     "@openzeppelin/contracts": "^5.0.0",
     "ethers": "^6.6.5",
     "mqtt": "^4.2.6",
     "solc": "^0.8.20",
+    "web3.storage": "^4.5.5",
     "winston": "^3.3.3"
   }
 }

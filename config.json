@@ -3,7 +3,7 @@
   "infuraProjectId": "YOUR_INFURA_PROJECT_ID_HERE",
   "infuraAPISecret": "YOUR_INFURA_API_SECRET_HERE",
   "contractAddress": "YOUR_CONTRACT_ADDRESS_HERE",
-  "lighthouseAPIKey": "YOUR_LIGHTHOUSE_API_KEY_HERE",
+  "web3StorageToken": "WEB3STORAGE_TOKEN",
   "mqtt": {
     "brokerIp": "YOUR_TEST_IP",
     "port": 1883,

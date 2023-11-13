@@ -2,9 +2,9 @@ const fs = require("fs");
 const path = require("path");
 const { convertToCsv } = require("./csvUtils");
 const logger = require("../utils/logger");
-const lighthouse = require("@lighthouse-web3/sdk");
 const config = require("../../config");
 const { storeDataToContract } = require("../smartcontract/utils/utils"); // Import the function from the smart contract utils
+const { Web3Storage, getFilesFromPath } = require("web3.storage");
 
 const fsPromises = fs.promises; // Add this line to get the 'promises' object from 'fs'
 
@@ -12,19 +12,23 @@ let receivedData = ""; // Variable to store received data as a CSV string
 let isFirstLine = true; // Flag to indicate if it's the first line of the received data
 let isUploading = false; // Flag to indicate if data is currently being uploaded to IPFS
 
+const web3StorageAPIToken = config.web3StorageToken;
+
+async function uploadToIPFS(chunkFileDirectory) {
+  const storage = new Web3Storage({ token: web3StorageAPIToken });
+  const files = await getFilesFromPath(chunkFileDirectory);
+  var cid = await storage.put(files);
+  return cid;
+}
+
 async function uploadChunkToIPFS(chunkFileDirectory, timestamp) {
   try {
-    const uploadResponse = await lighthouse.upload(
-      chunkFileDirectory,
-      config.lighthouseAPIKey
-    );
+    const uploadResponse = await uploadToIPFS(chunkFileDirectory);
     // Log the IPFS hash of the uploaded file
-    logger.info(
-      `Uploaded chunk to IPFS. IPFS Hash: ${uploadResponse.data.Hash}`
-    );
+    logger.info(`Uploaded chunk to IPFS. IPFS Hash: ${uploadResponse}`);
 
     // Store the IPFS CID on the smart contract
-    await storeDataToContract(uploadResponse.data.Hash, timestamp);
+    await storeDataToContract(uploadResponse, timestamp);
     //logger.info(`Transaction made on contract: ${ethRes}`)
   } catch (err) {
     logger.error(`Error uploading chunk to IPFS: ${err.message}`);
